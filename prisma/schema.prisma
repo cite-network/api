@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model entity {
+  id                 String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name               String
+  type               String
+  metadata           Json?
+  created_at         DateTime     @default(now())
+  source_connections connection[] @relation("source_connections")
+  target_connections connection[] @relation("target_connections")
+}
+
+model connection {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type             String
+  source_entity_id String   @db.Uuid
+  target_entity_id String   @db.Uuid
+  metadata         Json?
+  weight           Int?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+  source_entity    entity   @relation("source_connections", fields: [source_entity_id], references: [id])
+  target_entity    entity   @relation("target_connections", fields: [target_entity_id], references: [id])
+}
