@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req } from "@nestjs/common";
+import { Controller, Delete, Get, Param, Post, Put, Req } from "@nestjs/common";
 import { EntityService } from "./entity.service";
 import { handleErrorResult } from "src/utils/services";
 
@@ -14,6 +14,20 @@ export class EntityController {
   @Post()
   async createEntity(@Req() request: Request) {
     const result = await this.entityService.createEntity(request.body);
+    if (result.hasError) handleErrorResult(result);
+    return result.data;
+  }
+
+  @Put(":id")
+  async updateEntity(@Param("id") id: string, @Req() request: Request) {
+    const result = await this.entityService.updateEntity(id, request.body);
+    if (result.hasError) handleErrorResult(result);
+    return result.data;
+  }
+
+  @Delete(":id")
+  async deleteEntity(@Param("id") id: string) {
+    const result = await this.entityService.deleteEntity(id);
     if (result.hasError) handleErrorResult(result);
     return result.data;
   }
