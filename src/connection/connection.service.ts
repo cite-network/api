@@ -8,6 +8,7 @@ const connectionCreationSchema = z.object({
   source_entity_id: z.string(),
   target_entity_id: z.string(),
   metadata: z.any(),
+  weight: z.number(),
 });
 
 @Injectable()
